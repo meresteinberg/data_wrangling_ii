@@ -46,6 +46,67 @@ nyc_cost =
   first()
 ```
 
+## CSS Selectors 
+
+```{r}
+swm_html = 
+  read_html("https://www.imdb.com/list/ls070150896/") 
+
+title_vec=
+  swm_html |> 
+  html_elements(".ipc-title-link-wrapper .ipc-title__text") |> 
+  html_text()
+
+runtime_vec=  
+  swm_html |> 
+  html_elements(".dli-title-metadata-item:nth-child(2)") |> 
+  html_text()
+
+swm_df=
+  tibble(
+    title= title_vec,
+    runtime= runtime_vec
+  )
+```
+Steps: click selector gatchet bookmark, click what you want and can then click on what you dont want, and can then copy the CSS tag at the bottom that is pasted into html_elements()
+
+
+
+Lets import some books
+```{r}
+books_html=read_html("https://books.toscrape.com/")
+
+books_html |> 
+  html_elements(".product_pod a") |> 
+  html_text()
+```
+
+## Using an API
+
+Get water data.
+
+```{r}
+nyc_water = 
+  GET("https://data.cityofnewyork.us/resource/ia2d-e54m.csv") |> 
+  content("parsed")
+```
+
+Get BRFSS data--limit parameter is based on instructions from this website
+```{r}
+brfss_smart2010 = 
+  GET("https://chronicdata.cdc.gov/resource/acme-vg9e.csv",
+      query = list("$limit" = 5000)) |> 
+  content("parsed")
+```
+
+Pokemon API
+```{r}
+poke = 
+  GET("http://pokeapi.co/api/v2/pokemon/ditto") |>
+  content()
+
+poke[["name"]]
+```
 
 
 
