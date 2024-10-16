@@ -117,6 +117,144 @@ as.numeric(sex_vec)
 first putting male male first
 
 
+## Revisit a lot of exampples
+
+NSDUH
+
+```{r}
+url = "http://samhda.s3-us-gov-west-1.amazonaws.com/s3fs-public/field-uploads/2k15StateFiles/NSDUHsaeShortTermCHG2015.htm"
+drug_use_html = read_html(url)
+
+drug_use_html
+```
+
+Get pieces actually need
+```{r}
+marj_use_df=
+drug_use_html |> 
+  html_table() |> 
+  first() |> 
+  slice(-1) |> 
+  select(-contains("P Value")) |> 
+  pivot_longer(
+    cols= -State,
+    names_to = "age_year",
+    values_to = "percent"
+  ) |> 
+  separate(age_year, into = c("age", "year"), sep = "\\(") |> 
+  mutate(
+    year=str_replace(year, "\\)", ""),
+    percent=str_remove(percent, "[a-c]$"),
+    percent=as.numeric(percent)
+  )
+```
+after slice: get rid of p values, go from wide format to long format, separate columns into two variables (age grp and year), also get rid of a's and b's and c's in the percentages and convert all numbers to numeric variables.
+
+
+Want plot of proportion of kids who responded YES in 2013, 2014, 2015 only among kids 12-17
+```{r}
+marj_use_df |> 
+  filter(age== "12-17") |> 
+  mutate(
+    State=fct_reorder(State, percent)
+  ) |> 
+  ggplot(aes(x=State, y=percent, color=year))+
+  geom_point()+
+  theme(axis.text.x = element_text(angle=90, vjust = 0.5, hjust = 1))
+```
+fct_reorder statement we are saying we have this categorical variable (State) and want to order it by percent
+
+
+## NYC Restaurant Inspections
+```{r}
+data("rest_inspec")
+
+rest_inspec |> 
+  slice(1:1000)
+```
+
+```{r}
+rest_inspec |> 
+  count(boro, grade) |> 
+  pivot_wider(
+    names_from = grade,
+    values_from = n
+  )
+```
+
+only going to look at ABC grades and get rid of missing boro info (putting ! infront of function will do opposite )
+```{r}
+rest_inspec=
+  rest_inspec |> 
+  filter(
+    str_detect(grade, "[A-C]"),
+    !(boro== "Missing")
+  )
+```
+
+```{r}
+rest_inspec |> 
+  mutate(dba=str_to_sentence(dba)) |> 
+  filter(str_detect(dba, "Pizza"))
+```
+
+
+```{r}
+rest_inspec |> 
+  mutate(dba=str_to_sentence(dba)) |> 
+  filter(str_detect(dba, "Pizza")) |> 
+  mutate(boro=fct_infreq(boro)) |> 
+  ggplot(aes(x=boro))+
+  geom_bar()
+```
+fct_infreq tells to put boros in order of frequency
+
+
+```{r}
+rest_inspec |> 
+  mutate(dba=str_to_sentence(dba)) |> 
+  filter(str_detect(dba, "Pizza")) |> 
+  mutate(boro=fct_relevel(boro, "STATEN ISLAND")) |> 
+  ggplot(aes(x=boro))+
+  geom_bar()
+```
+putting staten island first with relevel
+
+
+```{r}
+rest_inspec |> 
+  mutate(dba=str_to_sentence(dba)) |> 
+  filter(str_detect(dba, "Pizza")) |> 
+  mutate(boro=str_replace(boro, "MANHATTAN", "THE CITY"),
+         boro=fct_infreq(boro)
+         ) |> 
+  ggplot(aes(x=boro))+
+  geom_bar()
+```
+
+
+```{r}
+rest_inspec |> 
+  mutate(dba=str_to_sentence(dba)) |> 
+  filter(str_detect(dba, "Pizza")) |> 
+  mutate(boro=fct_infreq(boro),
+         boro=fct_recode(boro, "THE CITY"= "MANHATTAN")
+         ) |> 
+  ggplot(aes(x=boro))+
+  geom_bar()
+```
+fct_recode does same thing as str_replace for changing Manhattan to The City
+
+
+One last thing on factors...
+
+```{r}
+rest_inspec |> 
+  mutate(dba=str_to_sentence(dba)) |> 
+  filter(str_detect(dba, "Pizza")) |> 
+  mutate(boro=fct_infreq(boro)) |> 
+  lm(zipcode~boro, data= _)
+```
 
 
 
