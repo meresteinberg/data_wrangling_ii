@@ -1,0 +1,16 @@
+---
+title: "strings_and_factors"
+output: github_document
+date: "2024-10-16"
+---
+Load necessary libraries
+```{r setup, include=FALSE}
+library(rvest)
+```
+
+## Let's do strings
+
+```{r}
+vector()
+```
+
