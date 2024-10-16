@@ -1,32 +1,42 @@
----
-title: "strings_and_factors"
-output: github_document
-date: "2024-10-16"
----
+strings_and_factors
+================
+2024-10-16
+
 Load necessary libraries
-```{r setup, include=FALSE}
-library(rvest)
-library(tidyverse)
-library(p8105.datasets)
 
-```
+## Let’s do strings
 
-## Let's do strings
-
-```{r}
+``` r
 string_vec=c("my", "name", "is", "jess")
 
 str_detect(string_vec, "a")
+```
 
+    ## [1] FALSE  TRUE FALSE FALSE
+
+``` r
 str_detect(string_vec, "Jess")
+```
 
+    ## [1] FALSE FALSE FALSE FALSE
+
+``` r
 str_replace(string_vec, "jess", "Jeff")
+```
 
+    ## [1] "my"   "name" "is"   "Jeff"
+
+``` r
 str_replace(string_vec, "e", "E")
 ```
-str_detect will tell us which ones has an "a" in it; it is case sensitive and capitalized J will not be recognized. str_replace can capitalize things
 
-```{r}
+    ## [1] "my"   "namE" "is"   "jEss"
+
+str_detect will tell us which ones has an “a” in it; it is case
+sensitive and capitalized J will not be recognized. str_replace can
+capitalize things
+
+``` r
 string_vec = c(
   "i think we all rule for participating",
   "i think i have been caught",
@@ -34,14 +44,26 @@ string_vec = c(
   "it will be fun, i think"
   )
 str_detect(string_vec, "i think")
+```
 
+    ## [1] TRUE TRUE TRUE TRUE
+
+``` r
 str_detect(string_vec, "^i think")
+```
 
+    ## [1]  TRUE  TRUE  TRUE FALSE
+
+``` r
 str_detect(string_vec, "i think^")
 ```
-if want to find one that STARTS with "i think", put carrot in front (and vice versa)
 
-```{r}
+    ## [1] FALSE FALSE FALSE FALSE
+
+if want to find one that STARTS with “i think”, put carrot in front (and
+vice versa)
+
+``` r
 string_vec = c(
   "Time for a Pumpkin Spice Latte!",
   "went to the #pumpkinpatch last weekend",
@@ -50,14 +72,23 @@ string_vec = c(
   )
 
 str_detect(string_vec, "pumpkin")
+```
 
+    ## [1] FALSE  TRUE FALSE FALSE
+
+``` r
 str_detect(string_vec, "Pumpkin")
+```
 
+    ## [1]  TRUE FALSE  TRUE FALSE
+
+``` r
 str_detect(string_vec,"[Pp]umpkin")
 ```
 
+    ## [1]  TRUE  TRUE  TRUE FALSE
 
-```{r}
+``` r
 string_vec = c(
   '7th inning stretch',
   '1st half soon to begin. Texas won the toss.',
@@ -66,13 +97,20 @@ string_vec = c(
   )
 
 str_detect(string_vec,"[0-9][a-z]")
+```
 
+    ## [1]  TRUE  TRUE FALSE FALSE
+
+``` r
 str_detect(string_vec, "^[0-9][a-zA-Z]")
 ```
-pattern of number and then two letters. str_detect not detecting third one bc number followed by a space
 
+    ## [1]  TRUE  TRUE FALSE  TRUE
 
-```{r}
+pattern of number and then two letters. str_detect not detecting third
+one bc number followed by a space
+
+``` r
 string_vec = c(
   'Its 7:11 in the evening',
   'want to go to 7-11?',
@@ -82,11 +120,14 @@ string_vec = c(
 
 str_detect(string_vec, "7.11")
 ```
-want "7 any character 11". Dot is special bc matches anything
 
+    ## [1]  TRUE  TRUE FALSE  TRUE
+
+want “7 any character 11”. Dot is special bc matches anything
 
 How things start to get real strange
-```{r}
+
+``` r
 string_vec = c(
   'The CI is [2, 5]',
   ':-]',
@@ -96,28 +137,32 @@ string_vec = c(
 
 str_detect(string_vec, "\\[")
 ```
-What if we are looking for a special character like a bracket? \\tells that we are looking for bracket
 
-##Factors...
+    ## [1]  TRUE FALSE  TRUE  TRUE
 
-```{r}
+What if we are looking for a special character like a bracket? \tells
+that we are looking for bracket
+
+\##Factors…
+
+``` r
 sex_vec= factor(c("male", "male", "female", "female"))
 as.numeric(sex_vec)
 ```
-easy to mistake categorical variables/factor variables for string variables, but factors give us a little more info
 
+    ## [1] 2 2 1 1
 
+easy to mistake categorical variables/factor variables for string
+variables, but factors give us a little more info
 
-do some releveling...
-```{r}
+do some releveling…
+
+``` r
 sex_vec=fct_relevel(sex_vec, "male")
 
 as.numeric(sex_vec)
 ```
+
+    ## [1] 1 1 2 2
+
 first putting male male first
-
-
-
-
-
-
